@@ -5,10 +5,22 @@ export async function GET() {
   try {
     const sAnon = getSupabase();
     const sSvc = getSupabaseService();
-    const [{ data: existsAnon, error: eAnon }, { data: existsSvc, error: eSvc }] = await Promise.all([
-      sAnon.rpc("pg_catalog.pg_table_is_visible", { relid: "public.journal_entries" as any }).catch(() => ({ data: null, error: { message: "rpc not accessible" } })),
-      sSvc ? sSvc.from("journal_entries").select("count").limit(1).maybeSingle() : Promise.resolve({ data: null, error: { message: "no service" } })
-    ]) as any;
+
+    type CountRow = { count: number } | null;
+    type DbErr = { message: string } | null;
+
+    const anonPromise = sAnon
+      .from("journal_entries_v2")
+      .select("count")
+      .limit(1)
+      .maybeSingle();
+
+    const svcPromise = sSvc
+      ? sSvc.from("journal_entries_v2").select("count").limit(1).maybeSingle()
+      : Promise.resolve({ data: null as CountRow, error: { message: "no service" } as DbErr });
+
+    const [{ data: existsAnon, error: eAnon }, { data: existsSvc, error: eSvc }] = await Promise.all([anonPromise, svcPromise]);
+
     return NextResponse.json({
       anonClientOk: !!sAnon,
       serviceClientOk: !!sSvc,

@@ -2,10 +2,8 @@
 import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import { Button, Card } from "@/components/ui";
-import { useI18n } from "@/lib/i18n";
 
 export default function SettingsPage() {
-  const { t } = useI18n() as any;
   const [downloading, setDownloading] = useState(false);
   const { isLoaded, userId } = useAuth();
 
@@ -39,33 +37,33 @@ export default function SettingsPage() {
 
   return (
     <main className="container-max py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">{t('settingsTitle')}</h1>
+      <h1 className="text-2xl font-semibold">Settings</h1>
       <SignedOut>
         <Card className="p-6 text-center">
-          <p className="mb-2">{t('signInToManage')}</p>
+          <p className="mb-2">Sign in to manage your settings.</p>
           <SignInButton>
-            <Button>{t('btnSignIn')}</Button>
+            <Button>Sign in</Button>
           </SignInButton>
         </Card>
       </SignedOut>
       <SignedIn>
         <Card className="p-6 space-y-4">
           <div>
-            <div className="text-sm text-muted-foreground">{t('dataExport')}</div>
-            <div className="text-sm">{t('dataExportDesc')}</div>
+            <div className="text-sm text-muted-foreground">Export your data</div>
+            <div className="text-sm">Download your journal entries as JSON.</div>
             <div className="mt-2"><Button onClick={onExport} disabled={!isLoaded || !userId || downloading}>Export JSON</Button></div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground">{t('dataImport')}</div>
-            <div className="text-sm">{t('dataImportDesc')}</div>
+            <div className="text-sm text-muted-foreground">Import your data</div>
+            <div className="text-sm">Upload a JSON file of entries to import.</div>
             <div className="mt-2">
               <input type="file" accept="application/json" onChange={(e) => e.target.files && e.target.files[0] && onImport(e.target.files[0])} />
             </div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground">{t('deleteAccount')}</div>
-            <div className="text-sm">{t('deleteAccountDesc')}</div>
-            <div className="mt-2"><Button variant="outline" onClick={onDeleteAccount}>{t('deleteAccount')}</Button></div>
+            <div className="text-sm text-muted-foreground">Delete account</div>
+            <div className="text-sm">This will permanently remove your data. (Not yet implemented)</div>
+            <div className="mt-2"><Button variant="outline" onClick={onDeleteAccount}>Delete account</Button></div>
           </div>
         </Card>
       </SignedIn>

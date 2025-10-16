@@ -23,6 +23,11 @@ Minimal journaling with AI mood insights, weekly trends, and PDF export.
 
 ---
 
+### Production
+- Live app: [Insight Journal on Vercel](https://insight-journal-ozkancimenlis-projects.vercel.app/)
+
+---
+
 ### Getting Started
 1) Environment variables
 ```bash

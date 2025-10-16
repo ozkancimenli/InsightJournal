@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     }
     const res = await analyzeTextMood(content);
     return NextResponse.json(res);
-  } catch (e) {
+  } catch {
     return NextResponse.json({ mood: "Neutral", score: 0.5 });
   }
 }

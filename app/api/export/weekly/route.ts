@@ -18,9 +18,10 @@ export async function GET() {
     .gte("created_at", since.toISOString())
     .order("created_at", { ascending: true });
 
-  const entries = data ?? [];
-  const avg = entries.length ? entries.reduce((a, b) => a + (b as any).score, 0) / entries.length : 0;
-  const counts = entries.reduce((acc, cur: any) => {
+  type Row = { created_at: string; mood: string; score: number };
+  const entries: Row[] = (data as Row[]) ?? [];
+  const avg = entries.length ? entries.reduce((a, b) => a + b.score, 0) / entries.length : 0;
+  const counts = entries.reduce((acc: Record<string, number>, cur: Row) => {
     acc[cur.mood] = (acc[cur.mood] ?? 0) + 1; return acc;
   }, {} as Record<string, number>);
   const topMood = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Neutral";

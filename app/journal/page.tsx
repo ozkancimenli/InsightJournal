@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAuth, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { useAuth, SignedOut, SignInButton } from "@clerk/nextjs";
 import { Button, Card, Textarea } from "@/components/ui";
 import { moodToEmoji, moodToColor } from "@/lib/utils";
 import { toast } from "sonner";
 
-type AnalyzeResponse = { mood: string; score: number };
+type AnalyzeResponse = { mood: string; score: number; primary_emotion?: string; emotions?: string[] };
 type EntryItem = { id: string; content: string; mood: string; score: number; created_at: string };
 
 export default function JournalPage() {
@@ -42,7 +42,7 @@ export default function JournalPage() {
       const res = await fetch("/api/entries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, mood: result.mood, score: result.score, primary_emotion: (result as any).primary_emotion, emotions: (result as any).emotions }),
+      body: JSON.stringify({ content, mood: result.mood, score: result.score, primary_emotion: result.primary_emotion, emotions: result.emotions }),
       });
       if (!res.ok) throw new Error("Save failed");
       setContent("");
@@ -57,11 +57,7 @@ export default function JournalPage() {
 
   useEffect(() => {}, []);
 
-  async function onStartEdit(item: EntryItem) {
-    setEditing(item);
-    setContent(item.content);
-    setResult({ mood: item.mood, score: item.score });
-  }
+  // edit helpers are unused on this page; editing is handled on the dashboard
 
   async function onSaveEdit() {
     if (!editing) return;
@@ -77,11 +73,7 @@ export default function JournalPage() {
       toast.success("Updated entry");
   }
 
-  async function onDelete(id: string) {
-    const res = await fetch(`/api/entries?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    if (!res.ok) return toast.error("Delete failed");
-    toast.success("Deleted");
-  }
+  // delete is not triggered from this page
 
   return (
     <main className="container-max py-10 space-y-6">

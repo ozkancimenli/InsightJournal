@@ -5,7 +5,7 @@ import { Button, Card } from "@/components/ui";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { moodToEmoji } from "@/lib/utils";
 
-type Entry = { id?: string; content?: string; created_at: string; mood: string; score: number };
+type Entry = { id?: string; content?: string; created_at: string; mood: string; score: number; emotions?: string[]; primary_emotion?: string };
 
 export default function DashboardPage() {
   const [data, setData] = useState<Entry[]>([]);
@@ -166,7 +166,7 @@ export default function DashboardPage() {
       {recentEntries.length > 0 && (
         <Card className="mt-4">
           <div className="text-sm text-muted-foreground mb-2">Emotion distribution (last {range} days)</div>
-          <EmotionsPie data={data as any} />
+          <EmotionsPie data={data} />
         </Card>
       )}
 
@@ -196,9 +196,9 @@ export default function DashboardPage() {
                 ) : (
                   <>
                 {e.content && <p className="mt-1 text-sm whitespace-pre-wrap">{e.content}</p>}
-                {Array.isArray((e as any).emotions) && (e as any).emotions.length > 0 && (
+                {Array.isArray(e.emotions) && e.emotions.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
-                    {(e as any).emotions.slice(0,3).map((em: string, i: number) => (
+                    {e.emotions.slice(0,3).map((em: string, i: number) => (
                       <span key={i} className="text-xs rounded-full border px-2 py-0.5">
                         {em}
                       </span>

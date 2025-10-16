@@ -1,7 +1,7 @@
 "use client";
 import { ResponsiveContainer, ComposedChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, Scatter, Cell, Area } from "recharts";
 
-type Entry = { created_at: string; mood: string; score: number };
+type Entry = { created_at: string; mood: string; score: number; primary_emotion?: string };
 
 export default function DashboardChart({ data, showPoints = true }: { data: Entry[]; showPoints?: boolean }) {
   const points = data.map(d => ({
@@ -9,7 +9,7 @@ export default function DashboardChart({ data, showPoints = true }: { data: Entr
     score: d.score,
     time: new Date(d.created_at).getTime(),
     label: new Date(d.created_at).toLocaleString(),
-    primary: (d as any).primary_emotion as string | undefined,
+    primary: d.primary_emotion,
   }));
 
   // daily aggregates (average per day)
@@ -55,7 +55,7 @@ export default function DashboardChart({ data, showPoints = true }: { data: Entr
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis type="number" dataKey="day" domain={["dataMin", "dataMax"]} tickFormatter={(v) => new Date(Number(v)).toLocaleDateString()} />
         <YAxis domain={[0, 1]} tickFormatter={(v) => `${Math.round(Number(v) * 100)}%`} />
-        <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: any) => `${Math.round(Number(v) * 100)}%`} labelFormatter={(v) => fmt(Number(v))} />
+        <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: number) => `${Math.round(Number(v) * 100)}%`} labelFormatter={(v: number) => fmt(Number(v))} />
         {/* Daily min–max band (approx) */}
         <Area data={aggregates} type="monotone" dataKey="max" stroke="none" fill="#2563eb" fillOpacity={0.08} />
         <Area data={aggregates} type="monotone" dataKey="min" stroke="none" fill="#ffffff" fillOpacity={1} />
